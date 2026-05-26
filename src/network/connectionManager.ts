@@ -46,6 +46,19 @@ const MAX_RETRIES = 3;
 const CREATE_ROOM_TIMEOUT = 10000; // 10 seconds
 const JOIN_ROOM_TIMEOUT = 15000; // 15 seconds
 
+/** PeerJS configuration with ICE servers for NAT traversal */
+const PEER_CONFIG = {
+  config: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      { urls: 'stun:stun4.l.google.com:19302' },
+    ],
+  },
+};
+
 /**
  * PeerJS-based connection manager for real-time peer-to-peer communication.
  * Handles room creation (host), room joining (guest), message passing,
@@ -91,7 +104,7 @@ export class PeerConnectionManager implements ConnectionManager {
         );
       }, CREATE_ROOM_TIMEOUT);
 
-      this.peer = new Peer(peerId);
+      this.peer = new Peer(peerId, PEER_CONFIG);
 
       this.peer.on('open', (id) => {
         clearTimeout(timeout);
@@ -127,7 +140,9 @@ export class PeerConnectionManager implements ConnectionManager {
         );
       }, JOIN_ROOM_TIMEOUT);
 
-      this.peer = new Peer();
+      // Generate a random guest peer ID to avoid PeerJS auto-generation issues
+      const guestId = `rlb-guest-${Math.random().toString(36).substring(2, 10)}`;
+      this.peer = new Peer(guestId, PEER_CONFIG);
 
       this.peer.on('open', () => {
         if (!this.peer) {
@@ -136,7 +151,7 @@ export class PeerConnectionManager implements ConnectionManager {
           return;
         }
 
-        const conn = this.peer.connect(peerId);
+        const conn = this.peer.connect(peerId, { reliable: true });
         this.setupGuestConnection(conn, timeout, resolve, reject);
       });
 
@@ -348,7 +363,7 @@ export class PeerConnectionManager implements ConnectionManager {
         this.peer.reconnect();
       }
 
-      const conn = this.peer.connect(this.remotePeerId!);
+      const conn = this.peer.connect(this.remotePeerId!, { reliable: true });
 
       const reconnectTimeout = setTimeout(() => {
         // This attempt failed

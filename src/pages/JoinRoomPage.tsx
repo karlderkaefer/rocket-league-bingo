@@ -8,7 +8,7 @@ type JoinState = 'idle' | 'connecting' | 'connected' | 'error';
 export default function JoinRoomPage() {
   const { code } = useParams<{ code?: string }>();
   const navigate = useNavigate();
-  const { joinRoom, connectionStatus } = useGame();
+  const { joinRoom, connectionStatus, state } = useGame();
 
   const [joinState, setJoinState] = useState<JoinState>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -50,12 +50,12 @@ export default function JoinRoomPage() {
     }
   }, [code, handleJoin]);
 
-  // Navigate to /game when connection is established
+  // Navigate to /game when connection is established AND board is ready
   useEffect(() => {
-    if (connectionStatus === 'connected' && joinState === 'connected') {
+    if (connectionStatus === 'connected' && joinState === 'connected' && state.board) {
       navigate('/game');
     }
-  }, [connectionStatus, joinState, navigate]);
+  }, [connectionStatus, joinState, navigate, state.board]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
