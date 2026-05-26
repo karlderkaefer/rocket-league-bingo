@@ -7,29 +7,29 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
 ## Tasks
 
 - [ ] 1. Project scaffolding and core setup
-  - [ ] 1.1 Initialize Vite + React + TypeScript project
+  - [x] 1.1 Initialize Vite + React + TypeScript project
     - Run `npm create vite@latest . -- --template react-ts`
     - Install dependencies: `react-router-dom`, `seedrandom`, `peerjs`
     - Install dev dependencies: `vitest`, `@testing-library/react`, `@testing-library/jest-dom`, `jsdom`, `@fast-check/vitest`, `gh-pages`
-    - Configure `vite.config.ts` with `base: '/rocket-league-bingo/'`
+    - Configure `vite.config.ts` with `base: '/rocket-league-bingo/'` and `server: { port: 5174 }`
     - Configure `vitest` in `vite.config.ts` with `environment: 'jsdom'`
     - Set up `tsconfig.json` with strict mode
     - _Requirements: 10.1, 10.5, 10.6_
 
-  - [ ] 1.2 Set up hash router and route structure
+  - [x] 1.2 Set up hash router and route structure
     - Create `src/App.tsx` with `createHashRouter` and `RouterProvider`
     - Define routes: `/` (HomePage), `/create` (CreateRoomPage), `/join/:code?` (JoinRoomPage), `/game` (GamePage)
     - Create placeholder components for each page
     - _Requirements: 10.1, 10.6_
 
 - [ ] 2. Core data models and types
-  - [ ] 2.1 Define TypeScript interfaces and types
+  - [x] 2.1 Define TypeScript interfaces and types
     - Create `src/types/index.ts` with all core types: `PlayerRole`, `Cell`, `Board`, `CellMarks`, `GameState`, `BingoLine`, `PersistedState`, `Category`, `GameMessage`, `GameAction`
     - Ensure types match the design document interfaces exactly
     - _Requirements: 4.1, 5.4, 6.1_
 
 - [ ] 3. Predefined categories data
-  - [ ] 3.1 Create category data module
+  - [x] 3.1 Create category data module
     - Create `src/data/categories.ts` with at least 3 predefined categories (Shot Speeds, Shot Types, and at least one additional)
     - Each category must have a unique `id`, `name`, and at least 10 items
     - Each item text must be ≤40 characters and unique within its category
@@ -37,13 +37,13 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Export a `getCategory(id: string)` helper and `allCategories` array
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-  - [ ]* 3.2 Write property test for category data integrity
+  - [x] 3.2 Write property test for category data integrity
     - **Property 9: Category data integrity**
     - Verify each category has unique name, ≥10 items, items ≤40 chars, no duplicates within category
     - **Validates: Requirements 9.2, 9.3**
 
 - [ ] 4. Seeded board generation
-  - [ ] 4.1 Implement board generator module
+  - [x] 4.1 Implement board generator module
     - Create `src/logic/boardGenerator.ts`
     - Import `seedrandom` and use `seedrandom.alea(seed)` for the PRNG
     - Implement Fisher-Yates shuffle with seeded PRNG
@@ -51,7 +51,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Collect items from selected categories, shuffle with seeded PRNG, take first 25
     - _Requirements: 4.1, 4.2, 4.4, 4.5_
 
-  - [ ]* 4.2 Write property tests for board generation
+  - [x] 4.2 Write property tests for board generation
     - **Property 2: Board generation determinism and size**
     - Verify same seed + categories always produces identical 25-cell board
     - **Property 3: Board items from selected categories only**
@@ -59,7 +59,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - **Validates: Requirements 4.1, 4.2, 4.4, 4.5**
 
 - [ ] 5. Share code encoding/decoding
-  - [ ] 5.1 Implement share code codec
+  - [x] 5.1 Implement share code codec
     - Create `src/logic/shareCodeCodec.ts`
     - Implement base62 encoding/decoding utilities
     - Implement `encodeShareCode(data: ShareCodeData): string` — encode seed (22 base62 chars) + category bitmask (1-2 base62 chars)
@@ -69,13 +69,13 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Derive PeerJS peer ID as `rlb-${seedBase62}`
     - _Requirements: 1.2, 2.1_
 
-  - [ ]* 5.2 Write property test for share code round-trip
+  - [x] 5.2 Write property test for share code round-trip
     - **Property 1: Share code round-trip**
     - Verify encoding then decoding produces original seed and categories, code ≤32 chars
     - **Validates: Requirements 1.2, 2.1**
 
 - [ ] 6. Game state reducer
-  - [ ] 6.1 Implement game state reducer
+  - [x] 6.1 Implement game state reducer
     - Create `src/logic/gameStateReducer.ts`
     - Implement `gameStateReducer(state: GameState, action: GameAction): GameState`
     - Handle actions: `MARK_CELL`, `UNMARK_CELL`, `SET_BOARD`, `SYNC_STATE`, `RESET`
@@ -83,7 +83,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Mark/unmark actions must be idempotent
     - _Requirements: 5.1, 5.3, 5.5, 7.5, 7.6_
 
-  - [ ]* 6.2 Write property tests for game state reducer
+  - [x] 6.2 Write property tests for game state reducer
     - **Property 4: Mark/unmark preserves other player's marks**
     - Verify marking by one player does not affect the other player's mark state
     - **Property 5: Mark and unmark actions are idempotent**
@@ -91,7 +91,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - **Validates: Requirements 5.1, 5.3, 5.5, 7.5**
 
 - [ ] 7. Bingo detection logic
-  - [ ] 7.1 Implement bingo detector
+  - [x] 7.1 Implement bingo detector
     - Create `src/logic/bingoDetector.ts`
     - Implement `detectBingo(marks: CellMarks[]): BingoLine[]`
     - Check all 5 rows, 5 columns, and 2 diagonals
@@ -99,7 +99,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Return array of all detected bingo lines
     - _Requirements: 6.1, 6.3_
 
-  - [ ]* 7.2 Write property tests for bingo detection
+  - [x] 7.2 Write property tests for bingo detection
     - **Property 6: Bingo detection correctness**
     - Verify bingo detected iff complete line exists (union of both players' marks)
     - **Property 7: Unmarking a cell in a bingo line removes that bingo**
@@ -107,7 +107,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - **Validates: Requirements 6.1, 6.3, 6.5**
 
 - [ ] 8. localStorage persistence adapter
-  - [ ] 8.1 Implement persistence adapter
+  - [x] 8.1 Implement persistence adapter
     - Create `src/logic/persistenceAdapter.ts`
     - Implement `saveGameState(state: PersistedState): void` — serialize to JSON and store in localStorage
     - Implement `loadGameState(): PersistedState | null` — parse from localStorage with schema validation, return null on failure
@@ -116,16 +116,16 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Handle corrupted JSON gracefully (clear data, return null)
     - _Requirements: 8.1, 8.2, 8.5, 8.6, 8.7_
 
-  - [ ]* 8.2 Write property test for persistence round-trip
+  - [x] 8.2 Write property test for persistence round-trip
     - **Property 8: Game state persistence round-trip**
     - Verify saving then loading produces equivalent game state
     - **Validates: Requirements 8.2, 8.5**
 
-- [ ] 9. Checkpoint - Core logic complete
+- [x] 9. Checkpoint - Core logic complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. PeerJS connection manager
-  - [ ] 10.1 Implement connection manager
+  - [x] 10.1 Implement connection manager
     - Create `src/network/connectionManager.ts`
     - Implement `createRoom(): Promise<{ peerId: string }>` — create Peer with deterministic ID `rlb-${seedBase62}`, wait for `open` event with 10s timeout
     - Implement `joinRoom(peerId: string): Promise<void>` — connect to host peer with 15s timeout
@@ -137,7 +137,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Handle room-full rejection (host sends REJECT message)
     - _Requirements: 1.4, 1.5, 2.3, 2.5, 2.6, 7.1, 7.3, 7.4, 8.3_
 
-  - [ ]* 10.2 Write unit tests for connection manager
+  - [x] 10.2 Write unit tests for connection manager
     - Mock PeerJS `Peer` constructor and events
     - Test connection establishment, timeout handling, error scenarios
     - Test reconnection with exponential backoff
@@ -145,7 +145,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - _Requirements: 1.4, 1.5, 2.5, 2.6, 7.4, 8.3_
 
 - [ ] 11. React Context and game provider
-  - [ ] 11.1 Create GameContext and GameProvider
+  - [x] 11.1 Create GameContext and GameProvider
     - Create `src/context/GameContext.tsx`
     - Wrap `useReducer` with `gameStateReducer`
     - Integrate `connectionManager` for sending/receiving messages
@@ -157,14 +157,14 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - _Requirements: 5.2, 5.3, 7.1, 7.2, 8.1_
 
 - [ ] 12. React components - Pages
-  - [ ] 12.1 Implement HomePage component
+  - [x] 12.1 Implement HomePage component
     - Create `src/pages/HomePage.tsx`
     - Display "Create Room" and "Join Room" buttons/links
     - Check localStorage for existing game state and offer resume option
     - Navigate to `/create` or `/join` routes
     - _Requirements: 1.1, 2.2_
 
-  - [ ] 12.2 Implement CreateRoomPage component
+  - [x] 12.2 Implement CreateRoomPage component
     - Create `src/pages/CreateRoomPage.tsx`
     - Generate seed using `crypto.getRandomValues` (128-bit)
     - Include `CategorySelector` component for category selection
@@ -175,7 +175,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Handle connection initialization errors with retry option
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 3.5_
 
-  - [ ] 12.3 Implement JoinRoomPage component
+  - [x] 12.3 Implement JoinRoomPage component
     - Create `src/pages/JoinRoomPage.tsx`
     - If `:code` param present, auto-extract and initiate connection
     - Otherwise show text input for manual share code entry
@@ -184,7 +184,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - On successful connection: receive seed + categories, generate board, navigate to `/game`
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ] 12.4 Implement GamePage component
+  - [x] 12.4 Implement GamePage component
     - Create `src/pages/GamePage.tsx`
     - Render `BoardGrid`, `ConnectionStatus`, and `BingoNotification` components
     - Subscribe to GameContext for board state and bingo lines
@@ -192,7 +192,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - _Requirements: 4.1, 5.1, 6.2, 8.2, 8.3_
 
 - [ ] 13. React components - Board and cells
-  - [ ] 13.1 Implement BoardGrid and BingoCell components
+  - [x] 13.1 Implement BoardGrid and BingoCell components
     - Create `src/components/BoardGrid.tsx` — render 5×5 CSS grid of BingoCell components
     - Create `src/components/BingoCell.tsx` — render individual cell with four visual states
     - Visual states: unmarked, marked-by-host, marked-by-guest, marked-by-both (distinct CSS classes)
@@ -200,7 +200,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Highlight cells that are part of a bingo line
     - _Requirements: 5.1, 5.4, 5.5, 5.6, 6.4_
 
-  - [ ] 13.2 Implement CategorySelector component
+  - [x] 13.2 Implement CategorySelector component
     - Create `src/components/CategorySelector.tsx`
     - Display all categories with name and item count
     - Toggle entire categories on/off
@@ -209,22 +209,22 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Enable confirm button when total ≥ 25
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.6_
 
-  - [ ]* 13.3 Write property test for category selection validation
+  - [x] 13.3 Write property test for category selection validation
     - **Property 10: Category selection item count validation**
     - Verify total count equals sum of selected category items, confirm enabled iff total ≥ 25
     - **Validates: Requirements 3.3, 3.4, 3.6**
 
-  - [ ] 13.4 Implement ConnectionStatus and BingoNotification components
+  - [x] 13.4 Implement ConnectionStatus and BingoNotification components
     - Create `src/components/ConnectionStatus.tsx` — show connected/disconnected/reconnecting states with visual indicator
     - Create `src/components/BingoNotification.tsx` — show bingo alert when detected, dismiss when bingo line broken
     - ConnectionStatus must show disconnection within 3 seconds of detection
     - _Requirements: 6.2, 6.5, 7.4_
 
-- [ ] 14. Checkpoint - UI components complete
+- [x] 14. Checkpoint - UI components complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 15. Real-time synchronization integration
-  - [ ] 15.1 Wire synchronization into GameProvider
+  - [x] 15.1 Wire synchronization into GameProvider
     - Ensure mark/unmark actions are transmitted within 100ms of local state change
     - Ensure received actions are applied to local state and UI within 100ms
     - Implement SYNC_REQUEST/SYNC_RESPONSE for reconnection state merge
@@ -233,7 +233,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Queue actions during disconnection, send on reconnect
     - _Requirements: 7.1, 7.2, 7.3, 7.5, 7.6, 8.4_
 
-  - [ ]* 15.2 Write integration tests for synchronization
+  - [x] 15.2 Write integration tests for synchronization
     - Test mark action transmission and receipt flow (mock DataChannel)
     - Test reconnection sync request/response
     - Test idempotent action handling
@@ -241,7 +241,7 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - _Requirements: 7.1, 7.2, 7.5, 8.4_
 
 - [ ] 16. State persistence integration
-  - [ ] 16.1 Wire persistence into game lifecycle
+  - [x] 16.1 Wire persistence into game lifecycle
     - Auto-save game state to localStorage within 1 second of board state changes (debounced)
     - On page load: check localStorage, restore state if valid
     - On restore: attempt DataChannel reconnection with stored peer info (10s timeout, 3 retries)
@@ -249,11 +249,11 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Handle corrupted localStorage gracefully (discard, show home screen)
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7_
 
-- [ ] 17. Checkpoint - Full feature integration complete
+- [x] 17. Checkpoint - Full feature integration complete
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 18. GitHub Pages deployment configuration
-  - [ ] 18.1 Configure deployment pipeline
+  - [x] 18.1 Configure deployment pipeline
     - Verify `vite.config.ts` has `base: '/rocket-league-bingo/'`
     - Add `homepage` field to `package.json`
     - Add `predeploy` and `deploy` scripts using `gh-pages -d dist`
@@ -261,8 +261,20 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     - Workflow: on push to main → install deps → build → deploy dist to gh-pages branch
     - _Requirements: 10.2, 10.3, 10.4, 10.5, 10.6_
 
-- [ ] 19. Final checkpoint - All tests pass and app is deployable
+- [x] 19. Final checkpoint - All tests pass and app is deployable
   - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 20. End-to-end testing with Playwright MCP server
+  - [x] 20.1 Test application UI flows with Playwright MCP
+    - Start the dev server on port 5174 (`npm run dev -- --port 5174`) and use the Playwright MCP browser tools to verify the app at `http://localhost:5174/rocket-league-bingo/`
+    - Navigate to the home page and verify "Create Room" and "Join Room" buttons render
+    - Test the Create Room flow: navigate to `/create`, verify category selector displays, select categories, confirm selection, verify share code is displayed
+    - Test the Join Room flow: navigate to `/join`, verify text input for share code is present
+    - Test the Game Board: verify 5×5 grid renders with correct cell content
+    - Test cell marking: click cells and verify visual state changes (unmarked → marked)
+    - Verify bingo notification appears when a line is completed
+    - Verify responsive layout and accessibility of key interactive elements
+    - _Requirements: 1.1, 2.2, 3.1, 4.1, 5.1, 6.2_
 
 ## Notes
 
@@ -289,7 +301,8 @@ This plan implements a client-side React SPA for two-player Rocket League Bingo 
     { "id": 6, "tasks": ["12.1", "12.2", "12.3", "12.4"] },
     { "id": 7, "tasks": ["13.1", "13.2", "13.4"] },
     { "id": 8, "tasks": ["13.3", "15.1", "16.1"] },
-    { "id": 9, "tasks": ["15.2", "18.1"] }
+    { "id": 9, "tasks": ["15.2", "18.1"] },
+    { "id": 10, "tasks": ["20.1"] }
   ]
 }
 ```
