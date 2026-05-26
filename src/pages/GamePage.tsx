@@ -134,8 +134,8 @@ function getCellStyle(mark: { hostMarked: boolean; guestMarked: boolean }): Reac
   }
   if (mark.guestMarked) {
     return {
-      background: '#e8f5e9',
-      borderColor: '#4caf50',
+      background: 'var(--guest-bg)',
+      borderColor: 'var(--guest-border)',
     };
   }
   return {};
@@ -176,11 +176,12 @@ const styles: Record<string, React.CSSProperties> = {
     width: '100%',
     padding: '12px 16px',
     borderRadius: '8px',
-    background: '#fff3e0',
-    border: '2px solid #ff9800',
+    background: 'var(--bingo-bg)',
+    border: '2px solid var(--bingo-border)',
     textAlign: 'center',
     fontWeight: 600,
     fontSize: '18px',
+    color: 'var(--bingo-text)',
   },
   boardGrid: {
     display: 'grid',

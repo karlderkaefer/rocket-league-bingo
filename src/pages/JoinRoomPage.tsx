@@ -206,7 +206,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: '100%',
   },
   errorText: {
-    color: '#e74c3c',
+    color: 'var(--error-text)',
     margin: 0,
     textAlign: 'center',
   },

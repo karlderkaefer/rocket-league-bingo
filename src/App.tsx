@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage';
 import CreateRoomPage from './pages/CreateRoomPage';
 import JoinRoomPage from './pages/JoinRoomPage';
 import GamePage from './pages/GamePage';
+import ThemeToggle from './components/ThemeToggle';
 
 const router = createHashRouter([
   { path: '/', element: <HomePage /> },
@@ -12,5 +13,10 @@ const router = createHashRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <ThemeToggle />
+      <RouterProvider router={router} />
+    </>
+  );
 }
