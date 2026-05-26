@@ -24,13 +24,13 @@ export function bytesToBase62(bytes: Uint8Array): string {
   }
 
   if (num === 0n) {
-    return BASE62_CHARS[0];
+    return BASE62_CHARS[0]!;
   }
 
   let result = '';
   while (num > 0n) {
     const remainder = Number(num % BASE);
-    result = BASE62_CHARS[remainder] + result;
+    result = BASE62_CHARS[remainder]! + result;
     num = num / BASE;
   }
 
@@ -65,14 +65,14 @@ export function base62ToBytes(str: string, byteLength: number): Uint8Array | nul
  */
 export function numberToBase62(num: number): string {
   if (num === 0) {
-    return BASE62_CHARS[0];
+    return BASE62_CHARS[0]!;
   }
 
   let n = BigInt(num);
   let result = '';
   while (n > 0n) {
     const remainder = Number(n % BASE);
-    result = BASE62_CHARS[remainder] + result;
+    result = BASE62_CHARS[remainder]! + result;
     n = n / BASE;
   }
 
@@ -122,7 +122,7 @@ export function bitmaskToCategoryIds(bitmask: number): string[] {
   const ids: string[] = [];
   for (let i = 0; i < allCategories.length; i++) {
     if (bitmask & (1 << i)) {
-      ids.push(allCategories[i].id);
+      ids.push(allCategories[i]!.id);
     }
   }
   return ids;
@@ -217,7 +217,7 @@ export function parseShareUrl(url: string): ShareCodeData | null {
       return null;
     }
 
-    const code = hashMatch[1];
+    const code = hashMatch[1]!;
     return decodeShareCode(code);
   } catch {
     return null;

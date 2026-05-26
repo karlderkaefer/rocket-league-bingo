@@ -28,7 +28,7 @@ describe('boardGenerator', () => {
   it('assigns correct cell indices 0-24', () => {
     const board = generateBoard(validInput);
     for (let i = 0; i < 25; i++) {
-      expect(board.cells[i].index).toBe(i);
+      expect(board.cells[i]!.index).toBe(i);
     }
   });
 

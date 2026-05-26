@@ -1,4 +1,4 @@
-import type { PersistedState, CellMarks, PlayerRole } from '../types';
+import type { PersistedState } from '../types';
 
 const STORAGE_KEY = 'rlb-game-state';
 
