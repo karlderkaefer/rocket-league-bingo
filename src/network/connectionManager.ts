@@ -56,7 +56,6 @@ export class PeerConnectionManager implements ConnectionManager {
   private connection: DataConnection | null = null;
   private remotePeerId: string | null = null;
   private connected = false;
-  private isHost = false;
   private reconnecting = false;
   private reconnectAttempt = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -78,7 +77,6 @@ export class PeerConnectionManager implements ConnectionManager {
    */
   async createRoom(): Promise<{ peerId: string }> {
     const peerId = `rlb-${this.seedBase62}`;
-    this.isHost = true;
 
     return new Promise<{ peerId: string }>((resolve, reject) => {
       const timeout = setTimeout(() => {
@@ -114,7 +112,6 @@ export class PeerConnectionManager implements ConnectionManager {
    * Throws RoomFullError if the host rejects the connection.
    */
   async joinRoom(peerId: string): Promise<void> {
-    this.isHost = false;
     this.remotePeerId = peerId;
 
     return new Promise<void>((resolve, reject) => {

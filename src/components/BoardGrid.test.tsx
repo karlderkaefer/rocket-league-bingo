@@ -77,7 +77,7 @@ describe('BoardGrid', () => {
     );
 
     const buttons = screen.getAllByRole('button');
-    fireEvent.click(buttons[7]);
+    fireEvent.click(buttons[7]!);
     expect(onCellClick).toHaveBeenCalledWith(7);
   });
 
@@ -104,10 +104,10 @@ describe('BoardGrid', () => {
     const buttons = container.querySelectorAll('button');
     // First 5 cells should have the bingo-line class
     for (let i = 0; i < 5; i++) {
-      expect(buttons[i].className).toContain('bingoCellBingoLine');
+      expect(buttons[i]!.className).toContain('bingoCellBingoLine');
     }
     // Cell 5 should NOT have the bingo-line class
-    expect(buttons[5].className).not.toContain('bingoCellBingoLine');
+    expect(buttons[5]!.className).not.toContain('bingoCellBingoLine');
   });
 
   it('highlights diagonal bingo line cells correctly', () => {
@@ -133,10 +133,10 @@ describe('BoardGrid', () => {
 
     const buttons = container.querySelectorAll('button');
     for (const idx of diagIndices) {
-      expect(buttons[idx].className).toContain('bingoCellBingoLine');
+      expect(buttons[idx]!.className).toContain('bingoCellBingoLine');
     }
     // Non-diagonal cell should not be highlighted
-    expect(buttons[1].className).not.toContain('bingoCellBingoLine');
+    expect(buttons[1]!.className).not.toContain('bingoCellBingoLine');
   });
 });
 

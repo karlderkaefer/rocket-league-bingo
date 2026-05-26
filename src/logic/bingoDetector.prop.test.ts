@@ -1,7 +1,7 @@
 import { test, fc } from '@fast-check/vitest';
 import { describe, expect } from 'vitest';
 import { detectBingo } from './bingoDetector';
-import type { BingoLine, CellMarks } from '../types';
+import type { BingoLine } from '../types';
 
 /**
  * Property 6: Bingo detection correctness

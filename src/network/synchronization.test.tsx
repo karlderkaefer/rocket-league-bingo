@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, act } from '@testing-library/react';
-import React from 'react';
 import { GameProvider, useGame, type GameContextValue } from '../context/GameContext';
 import * as connectionManagerModule from '../network/connectionManager';
 import type { ConnectionManager } from '../network/connectionManager';

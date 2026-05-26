@@ -1,5 +1,5 @@
 import { test, fc } from '@fast-check/vitest';
-import { beforeEach } from 'vitest';
+import { beforeEach, expect } from 'vitest';
 import { saveGameState, loadGameState } from './persistenceAdapter';
 import type { PersistedState } from '../types';
 

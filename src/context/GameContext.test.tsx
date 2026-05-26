@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, act, waitFor } from '@testing-library/react';
-import React from 'react';
 import { GameProvider, useGame } from './GameContext';
 import * as persistenceAdapter from '../logic/persistenceAdapter';
 import * as connectionManagerModule from '../network/connectionManager';
@@ -53,7 +52,7 @@ describe('GameContext persistence lifecycle', () => {
       isConnected: vi.fn().mockReturnValue(false),
     };
 
-    vi.mocked(connectionManagerModule.createConnectionManager).mockReturnValue(mockManager);
+    vi.mocked(connectionManagerModule.createConnectionManager).mockReturnValue(mockManager as unknown as connectionManagerModule.ConnectionManager);
   });
 
   afterEach(() => {
@@ -104,12 +103,8 @@ describe('GameContext persistence lifecycle', () => {
 
     localStorage.setItem('rlb-game-state', JSON.stringify(persisted));
 
-    let capturedCtx: ReturnType<typeof useGame> | null = null;
-
     await act(async () => {
-      renderWithProvider((ctx) => {
-        capturedCtx = ctx;
-      });
+      renderWithProvider(() => {});
     });
 
     // Should have created a connection manager and attempted to join
