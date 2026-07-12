@@ -85,6 +85,19 @@ vi.mock('@/features/game/hooks/useBingo', () => ({
   useBingo: () => mockUseBingo(),
 }));
 
+// GamePage's header renders PlayerPresence and UserMenu, which read the auth
+// context via useAuthContext. Mock it so the component tree renders without a
+// real AuthProvider (matches the pattern used in JoinRoomPage.test.tsx).
+vi.mock('@/app/providers', () => ({
+  useAuthContext: () => ({
+    user: null,
+    session: null,
+    isLoading: false,
+    error: null,
+    retry: vi.fn(),
+  }),
+}));
+
 // --- Render helper ---
 
 function renderGamePage(roomId = 'room-1') {
@@ -346,7 +359,7 @@ describe('GamePage', () => {
       renderGamePage();
 
       expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByText('BINGO!')).toBeInTheDocument();
+      expect(screen.getByText(/BINGO!/)).toBeInTheDocument();
     });
 
     it('does not show BingoNotification when no bingo lines', () => {
