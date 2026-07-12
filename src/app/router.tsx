@@ -1,4 +1,4 @@
-import { createHashRouter } from 'react-router-dom';
+import { createHashRouter, Navigate } from 'react-router-dom';
 
 import { HomePage } from '@/features/rooms/components/HomePage';
 import { CreateRoomPage } from '@/features/rooms/components/CreateRoomPage';
@@ -10,4 +10,6 @@ export const router = createHashRouter([
   { path: '/create', element: <CreateRoomPage /> },
   { path: '/join/:code?', element: <JoinRoomPage /> },
   { path: '/game/:roomId', element: <GamePage /> },
+  // Catch-all: handles OAuth callback fragments (access_token=...) and any unknown routes
+  { path: '*', element: <Navigate to="/" replace /> },
 ]);
