@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UserMenu } from '@/features/auth/components/UserMenu';
 import { usePlayerName } from '@/features/auth/hooks/usePlayerName';
+import { useAuthContext } from '@/app/providers';
 
 const PLAYER_NAME_KEY = 'rl-bingo-player-name';
 
@@ -16,6 +17,7 @@ export function getPlayerName(): string {
 export function HomePage() {
   const navigate = useNavigate();
   const derivedName = usePlayerName();
+  const { error: authError } = useAuthContext();
   const [name, setName] = useState(() => getPlayerName() || derivedName);
 
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -37,6 +39,12 @@ export function HomePage() {
           Play bingo with your Rocket League buddy
         </p>
       </div>
+
+      {authError && (
+        <div className="w-full max-w-xs rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2 text-center">
+          <p className="text-xs text-destructive">{authError}</p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-4 w-full max-w-xs">
         <Input

@@ -285,13 +285,26 @@ function OAuthProviders({ disabled }: OAuthProvidersProps) {
     setError(null);
     try {
       if (user?.is_anonymous) {
-        // Link the anonymous account to a GitHub identity
-        // Requires "Allow Manual Linking" enabled in Supabase dashboard
+        // Try to link the anonymous account to a GitHub identity.
+        // If the identity already belongs to another user, fall back to
+        // signInWithOAuth which signs into the existing account instead.
         const { error: linkError } = await supabase.auth.linkIdentity({
           provider: 'github',
           options: { redirectTo: window.location.origin },
         });
-        if (linkError) throw linkError;
+        if (linkError) {
+          if (linkError.message?.includes('identity_already_exists') ||
+              linkError.message?.includes('already linked')) {
+            // Fall back: sign in with the existing GitHub-linked account
+            const { error: oauthError } = await supabase.auth.signInWithOAuth({
+              provider: 'github',
+              options: { redirectTo: window.location.origin },
+            });
+            if (oauthError) throw oauthError;
+          } else {
+            throw linkError;
+          }
+        }
       } else {
         // Sign in with GitHub (no existing session or non-anonymous user)
         const { error: oauthError } = await supabase.auth.signInWithOAuth({

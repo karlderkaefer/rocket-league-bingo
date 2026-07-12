@@ -20,7 +20,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  if (error || !user) {
+  if (!user) {
     return <SignInFallback error={error} onRetry={retry} />;
   }
 

@@ -38,6 +38,26 @@ export function useAuth(): UseAuthReturn {
 
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
 
+    // Check for OAuth error in URL query params (e.g. after failed GitHub sign-in)
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauthError = urlParams.get('error_description') || urlParams.get('error');
+    const oauthErrorCode = urlParams.get('error_code');
+    if (oauthError) {
+      // Clean the URL so the error doesn't persist on refresh
+      window.history.replaceState({}, '', window.location.pathname + window.location.hash);
+
+      // If the error is "identity_already_exists", auto-retry with signInWithOAuth
+      // This happens when linkIdentity fails because the GitHub account is already
+      // linked to a different user. Fall back to signing into that existing account.
+      if (oauthErrorCode === 'identity_already_exists') {
+        await supabase.auth.signInWithOAuth({
+          provider: 'github',
+          options: { redirectTo: window.location.origin },
+        });
+        return; // Will redirect, no need to continue
+      }
+    }
+
     // Start timeout
     timeoutRef.current = setTimeout(() => {
       if (mountedRef.current) {
@@ -68,7 +88,7 @@ export function useAuth(): UseAuthReturn {
           user: session.user,
           session,
           isLoading: false,
-          error: null,
+          error: oauthError ? decodeURIComponent(oauthError.replace(/\+/g, ' ')) : null,
         });
         return;
       }
