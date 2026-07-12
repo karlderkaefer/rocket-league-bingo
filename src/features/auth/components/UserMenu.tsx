@@ -278,23 +278,31 @@ interface OAuthProvidersProps {
 function OAuthProviders({ disabled }: OAuthProvidersProps) {
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleGitHub() {
     setLoading(true);
+    setError(null);
     try {
       if (user?.is_anonymous) {
         // Link the anonymous account to a GitHub identity
-        const { error } = await supabase.auth.linkIdentity({ provider: 'github' });
-        if (error) throw error;
-      } else {
-        // Sign in with GitHub (no existing session or non-anonymous user)
-        const { error } = await supabase.auth.signInWithOAuth({
+        // Requires "Allow Manual Linking" enabled in Supabase dashboard
+        const { error: linkError } = await supabase.auth.linkIdentity({
           provider: 'github',
           options: { redirectTo: window.location.origin },
         });
-        if (error) throw error;
+        if (linkError) throw linkError;
+      } else {
+        // Sign in with GitHub (no existing session or non-anonymous user)
+        const { error: oauthError } = await supabase.auth.signInWithOAuth({
+          provider: 'github',
+          options: { redirectTo: window.location.origin },
+        });
+        if (oauthError) throw oauthError;
       }
     } catch (err) {
+      const message = err instanceof Error ? err.message : 'GitHub sign-in failed';
+      setError(message);
       console.error('GitHub auth failed:', err);
     } finally {
       setLoading(false);
@@ -302,16 +310,19 @@ function OAuthProviders({ disabled }: OAuthProvidersProps) {
   }
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      onClick={handleGitHub}
-      disabled={disabled || loading}
-      className="w-full"
-    >
-      <Github className="mr-2 h-4 w-4" />
-      Continue with GitHub
-    </Button>
+    <div className="flex flex-col gap-2">
+      {error && <p className="text-xs text-destructive">{error}</p>}
+      <Button
+        type="button"
+        variant="outline"
+        onClick={handleGitHub}
+        disabled={disabled || loading}
+        className="w-full"
+      >
+        <Github className="mr-2 h-4 w-4" />
+        Continue with GitHub
+      </Button>
+    </div>
   );
 }
 
