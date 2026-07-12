@@ -76,7 +76,10 @@ function SignInFallback({ error, onRetry }: SignInFallbackProps) {
     setFormLoading(true);
 
     try {
-      const { error: otpError } = await supabase.auth.signInWithOtp({ email });
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin },
+      });
       if (otpError) throw otpError;
       setMagicLinkSent(true);
     } catch (err) {
@@ -183,7 +186,7 @@ function SignInFallback({ error, onRetry }: SignInFallbackProps) {
               onClick={() => {
                 supabase.auth.signInWithOAuth({
                   provider: 'github',
-                  options: { redirectTo: window.location.origin + window.location.pathname },
+                  options: { redirectTo: window.location.origin },
                 });
               }}
               disabled={formLoading}

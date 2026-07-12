@@ -127,7 +127,10 @@ function SignInForm({ onSuccess }: SignInFormProps) {
     setLoading(true);
 
     try {
-      const { error: otpError } = await supabase.auth.signInWithOtp({ email });
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin },
+      });
       if (otpError) throw otpError;
       setMagicLinkSent(true);
     } catch (err) {
@@ -287,7 +290,7 @@ function OAuthProviders({ disabled }: OAuthProvidersProps) {
         // Sign in with GitHub (no existing session or non-anonymous user)
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'github',
-          options: { redirectTo: window.location.origin + window.location.pathname },
+          options: { redirectTo: window.location.origin },
         });
         if (error) throw error;
       }
