@@ -64,6 +64,7 @@ function GamePageContent({ roomId }: GamePageContentProps) {
     retryConnection,
     cellErrors,
     retryFailedMarks,
+    opponentName,
   } = useGameState(roomId);
 
   const { bingoLines } = useBingo(state.marks, state.board?.boardSize);
@@ -135,7 +136,7 @@ function GamePageContent({ roomId }: GamePageContentProps) {
       <div className="flex items-center justify-between">
         <h1 className="text-base font-bold tracking-tight">Rocket League Bingo</h1>
         <div className="flex items-center gap-2">
-          <PlayerPresence myRole={state.myRole} isConnected={isConnected} />
+          <PlayerPresence myRole={state.myRole} isConnected={isConnected} opponentName={opponentName} />
           <UserMenu />
           <ThemeToggle />
         </div>

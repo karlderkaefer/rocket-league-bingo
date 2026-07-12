@@ -4,6 +4,7 @@ import { useAuthContext } from '@/app/providers';
 import { supabase } from '@/lib/supabase/client';
 import { createRoom, joinRoom, endGame } from '@/features/rooms/actions';
 import { shareCodeSchema } from '@/features/rooms/schemas';
+import { usePlayerName } from '@/features/auth/hooks/usePlayerName';
 import type { Room } from '@/features/rooms/types';
 
 export interface UseRoomReturn {
@@ -33,6 +34,7 @@ export interface UseRoomReturn {
  */
 export function useRoom(): UseRoomReturn {
   const { user } = useAuthContext();
+  const playerName = usePlayerName();
 
   const [room, setRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +61,7 @@ export function useRoom(): UseRoomReturn {
         const result = await createRoom({
           categoryIds: categoryIdsWithSize,
           hostId: user.id,
+          hostName: playerName || undefined,
         });
 
         // Build a local Room object from the creation result
@@ -67,7 +70,9 @@ export function useRoom(): UseRoomReturn {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           host_id: user.id,
+          host_name: playerName || null,
           guest_id: null,
+          guest_name: null,
           seed: '',
           category_ids: categoryIdsWithSize,
           share_code: result.shareCode,
@@ -104,7 +109,7 @@ export function useRoom(): UseRoomReturn {
       setError(null);
 
       try {
-        const joinedRoom = await joinRoom(shareCode, user.id);
+        const joinedRoom = await joinRoom(shareCode, user.id, playerName || undefined);
         setRoom(joinedRoom);
 
         // Broadcast player-joined to notify the host (best-effort, with timeout)

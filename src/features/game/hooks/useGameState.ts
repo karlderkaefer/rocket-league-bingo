@@ -33,6 +33,7 @@ export interface UseGameStateReturn {
   cellErrors: Set<number>;
   retryFailedMarks: () => void;
   shareCode: string | null;
+  opponentName: string | null;
 }
 
 /**
@@ -89,6 +90,7 @@ export function useGameState(roomId: string): UseGameStateReturn {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shareCode, setShareCode] = useState<string | null>(null);
+  const [opponentName, setOpponentName] = useState<string | null>(null);
 
   // Track cell-level error indicators
   const [cellErrors, setCellErrors] = useState<Set<number>>(new Set());
@@ -218,6 +220,10 @@ export function useGameState(roomId: string): UseGameStateReturn {
           guestId: room.guest_id,
           myRole,
         };
+
+        // Store opponent name from room record
+        const oppName = myRole === 'host' ? room.guest_name : room.host_name;
+        setOpponentName(oppName ?? null);
 
         // Set player role and room status from DB record
         dispatch({ type: 'SET_MY_ROLE', role: myRole });
@@ -420,5 +426,6 @@ export function useGameState(roomId: string): UseGameStateReturn {
     cellErrors,
     retryFailedMarks,
     shareCode,
+    opponentName,
   };
 }

@@ -4,14 +4,16 @@ import { usePlayerName } from '@/features/auth/hooks/usePlayerName';
 interface PlayerPresenceProps {
   myRole: PlayerRole;
   isConnected: boolean;
+  opponentName?: string | null;
 }
 
 /**
  * Shows which players are in the game session.
  * Displays as compact pills in the header area.
  */
-export function PlayerPresence({ myRole, isConnected }: PlayerPresenceProps) {
+export function PlayerPresence({ myRole, isConnected, opponentName }: PlayerPresenceProps) {
   const playerName = usePlayerName() || 'You';
+  const opponentLabel = opponentName || (myRole === 'host' ? 'Guest' : 'Host');
 
   return (
     <div className="flex items-center gap-2 text-xs">
@@ -28,7 +30,7 @@ export function PlayerPresence({ myRole, isConnected }: PlayerPresenceProps) {
           aria-hidden="true"
         />
         <span className="text-amber-700 dark:text-amber-300">
-          {myRole === 'host' ? 'Guest' : 'Host'}
+          {opponentLabel}
         </span>
       </div>
     </div>

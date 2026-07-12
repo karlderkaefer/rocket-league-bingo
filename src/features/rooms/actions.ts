@@ -5,6 +5,7 @@ import type { Room } from '@/lib/supabase/types';
 interface CreateRoomParams {
   categoryIds: string[];
   hostId: string;
+  hostName?: string;
 }
 
 interface CreateRoomResult {
@@ -59,6 +60,7 @@ export async function createRoom(
   const { error } = await supabase.from('rooms').insert({
     id: roomId,
     host_id: params.hostId,
+    host_name: params.hostName || null,
     seed,
     category_ids: params.categoryIds,
     share_code: shareCode,
@@ -85,7 +87,8 @@ export async function createRoom(
  */
 export async function joinRoom(
   shareCode: string,
-  guestId: string
+  guestId: string,
+  guestName?: string
 ): Promise<Room> {
   // Look up the room by share code
   // First try: standard lookup (RLS allows reading 'waiting' rooms for anyone)
@@ -122,6 +125,7 @@ export async function joinRoom(
     .from('rooms')
     .update({
       guest_id: guestId,
+      guest_name: guestName || null,
       status: 'active',
     })
     .eq('id', room.id)
