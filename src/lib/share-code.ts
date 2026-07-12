@@ -121,8 +121,8 @@ export function decodeShareCode(code: string): string | null {
  */
 export function buildShareUrl(code: string): string {
   const base = typeof window !== 'undefined'
-    ? `${window.location.origin}/rocket-league-bingo/`
-    : 'https://username.github.io/rocket-league-bingo/';
+    ? `${window.location.origin}/`
+    : 'https://rocket-league-bingo.pansen.xyz/';
   return `${base}#/join/${code}`;
 }
 
