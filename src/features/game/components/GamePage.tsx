@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
 import { useGameState } from '@/features/game/hooks/useGameState';
@@ -6,6 +7,7 @@ import { BoardGrid } from '@/features/game/components/BoardGrid';
 import { BoardLegend } from '@/features/game/components/BoardLegend';
 import { CategoryLegend } from '@/features/game/components/CategoryLegend';
 import { BingoNotification } from '@/features/game/components/BingoNotification';
+import { WinCelebration } from '@/features/game/components/WinCelebration';
 import { ConnectionStatus } from '@/features/game/components/ConnectionStatus';
 import { PlayerPresence } from '@/features/game/components/PlayerPresence';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -67,7 +69,17 @@ function GamePageContent({ roomId }: GamePageContentProps) {
     opponentName,
   } = useGameState(roomId);
 
-  const { bingoLines } = useBingo(state.marks, state.board?.boardSize);
+  const { bingoLines, hasBingo } = useBingo(state.marks, state.board?.boardSize);
+
+  // Fire the smoke celebration once, on the rising edge of a bingo appearing.
+  const [celebrating, setCelebrating] = useState(false);
+  const wasBingo = useRef(false);
+  useEffect(() => {
+    if (hasBingo && !wasBingo.current) {
+      setCelebrating(true);
+    }
+    wasBingo.current = hasBingo;
+  }, [hasBingo]);
 
   const isGameOver =
     state.roomStatus === 'completed' || state.roomStatus === 'expired';
@@ -172,6 +184,9 @@ function GamePageContent({ roomId }: GamePageContentProps) {
 
       {/* Bingo notification */}
       <BingoNotification bingoLines={bingoLines} myRole={state.myRole} />
+
+      {/* GPU smoke win celebration overlay */}
+      <WinCelebration show={celebrating} onDone={() => setCelebrating(false)} />
 
       {/* Color legend */}
       <BoardLegend myRole={state.myRole} />
