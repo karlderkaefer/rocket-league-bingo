@@ -38,3 +38,5 @@ supabase/.temp/
 # Playwright test results
 test-results/
 playwright-report/
+
+supabase-source/

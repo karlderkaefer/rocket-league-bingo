@@ -1,5 +1,5 @@
 import type { PlayerRole } from '@/features/game/reducer';
-import { getPlayerName } from '@/features/rooms/components/HomePage';
+import { usePlayerName } from '@/features/auth/hooks/usePlayerName';
 
 interface PlayerPresenceProps {
   myRole: PlayerRole;
@@ -11,7 +11,7 @@ interface PlayerPresenceProps {
  * Displays as compact pills in the header area.
  */
 export function PlayerPresence({ myRole, isConnected }: PlayerPresenceProps) {
-  const playerName = getPlayerName() || 'You';
+  const playerName = usePlayerName() || 'You';
 
   return (
     <div className="flex items-center gap-2 text-xs">

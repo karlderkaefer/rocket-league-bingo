@@ -1,5 +1,5 @@
 import type { PlayerRole } from '@/features/game/reducer';
-import { getPlayerName } from '@/features/rooms/components/HomePage';
+import { usePlayerName } from '@/features/auth/hooks/usePlayerName';
 
 interface BoardLegendProps {
   myRole: PlayerRole;
@@ -10,7 +10,7 @@ interface BoardLegendProps {
  * "Both" is shown as a diagonal split of both colors.
  */
 export function BoardLegend({ myRole }: BoardLegendProps) {
-  const playerName = getPlayerName() || 'You';
+  const playerName = usePlayerName() || 'You';
   const opponentLabel = 'Opponent';
 
   const myColor = myRole === 'host'

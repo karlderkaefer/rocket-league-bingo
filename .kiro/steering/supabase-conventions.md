@@ -1,5 +1,17 @@
 # Supabase Conventions
 
+## Agent Skill Requirement
+
+When performing ANY Supabase-related work (migrations, RLS policies, auth configuration, realtime setup, type generation, database queries, etc.), **activate the `supabase` skill via `disclose_context`** before proceeding. If the skill is not available via that tool, read `.agents/skills/supabase/SKILL.md` directly.
+
+Key rules from the Supabase skill:
+- Verify against changelog and current docs before implementing
+- Use `execute_sql` (MCP) or `supabase db query` for iterating on schema changes — NOT `apply_migration`
+- When ready to commit: run advisors → review security checklist → `supabase db pull <name> --local --yes`
+- Enable RLS on every table in exposed schemas
+- Never use `user_metadata` for authorization decisions
+- Use MCP `search_docs` tool to look up Supabase documentation
+
 ## Local Development
 
 Always use the Supabase CLI for local development:

@@ -9,6 +9,7 @@ import { BingoNotification } from '@/features/game/components/BingoNotification'
 import { ConnectionStatus } from '@/features/game/components/ConnectionStatus';
 import { PlayerPresence } from '@/features/game/components/PlayerPresence';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { UserMenu } from '@/features/auth/components/UserMenu';
 import { Button } from '@/components/ui/button';
 
 /**
@@ -135,6 +136,7 @@ function GamePageContent({ roomId }: GamePageContentProps) {
         <h1 className="text-base font-bold tracking-tight">Rocket League Bingo</h1>
         <div className="flex items-center gap-2">
           <PlayerPresence myRole={state.myRole} isConnected={isConnected} />
+          <UserMenu />
           <ThemeToggle />
         </div>
       </div>

@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { UserMenu } from '@/features/auth/components/UserMenu';
+import { usePlayerName } from '@/features/auth/hooks/usePlayerName';
 
 const PLAYER_NAME_KEY = 'rl-bingo-player-name';
 
@@ -13,7 +15,8 @@ export function getPlayerName(): string {
 
 export function HomePage() {
   const navigate = useNavigate();
-  const [name, setName] = useState(getPlayerName);
+  const derivedName = usePlayerName();
+  const [name, setName] = useState(() => getPlayerName() || derivedName);
 
   function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value.slice(0, 20);
@@ -23,7 +26,8 @@ export function HomePage() {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 p-4">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <UserMenu />
         <ThemeToggle />
       </div>
 

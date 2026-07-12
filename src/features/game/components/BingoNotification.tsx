@@ -1,6 +1,6 @@
 import type { BingoLineWithWinner, BingoWinner } from '@/lib/bingo-detector';
 import type { PlayerRole } from '@/features/game/reducer';
-import { getPlayerName } from '@/features/rooms/components/HomePage';
+import { usePlayerName } from '@/features/auth/hooks/usePlayerName';
 
 interface BingoNotificationProps {
   bingoLines: BingoLineWithWinner[];
@@ -24,9 +24,7 @@ function formatLine(line: BingoLineWithWinner): string {
 /**
  * Get the display name for a winner relative to the current player.
  */
-function getWinnerName(winner: BingoWinner, myRole: PlayerRole): string {
-  const playerName = getPlayerName() || 'You';
-
+function getWinnerName(winner: BingoWinner, myRole: PlayerRole, playerName: string): string {
   if (winner === 'both') return 'Both players';
   if (winner === myRole) return playerName;
   return 'Opponent';
@@ -37,6 +35,8 @@ function getWinnerName(winner: BingoWinner, myRole: PlayerRole): string {
  * Shows who completed the line (which player marked all cells in it).
  */
 export function BingoNotification({ bingoLines, myRole }: BingoNotificationProps) {
+  const playerName = usePlayerName() || 'You';
+
   if (bingoLines.length === 0) {
     return null;
   }
@@ -50,7 +50,7 @@ export function BingoNotification({ bingoLines, myRole }: BingoNotificationProps
   else if (guestLines > 0 && hostLines === 0) primaryWinner = 'guest';
   else primaryWinner = 'both';
 
-  const winnerName = getWinnerName(primaryWinner, myRole);
+  const winnerName = getWinnerName(primaryWinner, myRole, playerName);
   const isSelf = primaryWinner === myRole;
 
   return (
