@@ -107,9 +107,16 @@ export function useRoom(): UseRoomReturn {
         const joinedRoom = await joinRoom(shareCode, user.id);
         setRoom(joinedRoom);
 
-        // Broadcast player-joined to notify the host
+        // Broadcast player-joined to notify the host (best-effort, with timeout)
+        // The host also subscribes to Postgres Changes on the room, so this is a
+        // redundant notification — if it fails, the host still detects the join.
         const channel = supabase.channel(`room:${joinedRoom.id}`);
         await new Promise<void>((resolve) => {
+          const timeout = setTimeout(() => {
+            supabase.removeChannel(channel);
+            resolve();
+          }, 3000);
+
           channel.subscribe((status) => {
             if (status === 'SUBSCRIBED') {
               channel.send({
@@ -117,11 +124,15 @@ export function useRoom(): UseRoomReturn {
                 event: 'player-joined',
                 payload: { playerId: user.id },
               });
-              // Small delay to ensure message is sent before cleanup
               setTimeout(() => {
+                clearTimeout(timeout);
                 supabase.removeChannel(channel);
                 resolve();
-              }, 100);
+              }, 200);
+            } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+              clearTimeout(timeout);
+              supabase.removeChannel(channel);
+              resolve(); // Don't block the join flow on broadcast failure
             }
           });
         });

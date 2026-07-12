@@ -354,13 +354,13 @@ export function useGameState(roomId: string): UseGameStateReturn {
    * Re-attempts each operation that previously failed after retries.
    * Clears errors on success, re-sets them on repeated failure.
    */
-  const retryFailedMarks = useCallback(() => {
+  const retryFailedMarks = useCallback(async () => {
     if (!user || cellErrors.size === 0) return;
 
-    const failedOps = new Map(failedOpsRef.current);
+    const failedOps = Array.from(failedOpsRef.current.entries());
 
+    // Process sequentially to avoid overwhelming the server
     for (const [cellIndex, opType] of failedOps) {
-      // Clear error indicator optimistically
       setCellErrors((prev) => {
         const next = new Set(prev);
         next.delete(cellIndex);
@@ -368,16 +368,16 @@ export function useGameState(roomId: string): UseGameStateReturn {
       });
       failedOpsRef.current.delete(cellIndex);
 
-      const persist =
-        opType === 'mark'
-          ? insertMark(roomId, cellIndex, user.id)
-          : deleteMark(roomId, cellIndex, user.id);
-
-      persist.catch(() => {
-        // Still failing — re-add error indicator
+      try {
+        if (opType === 'mark') {
+          await insertMark(roomId, cellIndex, user.id);
+        } else {
+          await deleteMark(roomId, cellIndex, user.id);
+        }
+      } catch {
         setCellErrors((prev) => new Set(prev).add(cellIndex));
         failedOpsRef.current.set(cellIndex, opType);
-      });
+      }
     }
   }, [roomId, user, insertMark, deleteMark, cellErrors]);
 

@@ -15,19 +15,28 @@ interface CreateRoomResult {
 /**
  * Generate a 128-bit random seed encoded as base62.
  * Uses crypto.getRandomValues for cryptographic randomness.
+ * Converts 128-bit value to base62 via BigInt division (unbiased).
  */
 function generateSeed(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
-  // Convert each byte to base62 characters
   const BASE62_CHARS =
     '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  let result = '';
+
+  // Convert bytes to a BigInt
+  let num = 0n;
   for (const byte of bytes) {
-    result += BASE62_CHARS[byte % 62];
-    result += BASE62_CHARS[Math.floor(byte / 62) % 62];
+    num = (num << 8n) | BigInt(byte);
   }
-  // Trim to a consistent length (22 chars covers 128 bits in base62)
-  return result.slice(0, 22);
+
+  // Convert BigInt to base62 string (unbiased)
+  let result = '';
+  while (num > 0n) {
+    result = BASE62_CHARS[Number(num % 62n)]! + result;
+    num = num / 62n;
+  }
+
+  // Pad to at least 22 chars (128 bits in base62 = ~21.5 chars)
+  return result.padStart(22, '0');
 }
 
 /**

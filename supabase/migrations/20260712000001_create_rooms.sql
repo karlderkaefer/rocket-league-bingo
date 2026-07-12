@@ -28,13 +28,13 @@ alter table public.rooms enable row level security;
 
 -- RLS Policies
 
--- Participants (host/guest) can read their room; anyone authenticated can see waiting rooms by share_code
+-- Participants (host/guest) can read their room; authenticated users can look up waiting rooms by share_code
 create policy "Participants can read their room"
   on public.rooms for select
   using (
     auth.uid() = host_id
     or auth.uid() = guest_id
-    or (status = 'waiting' and share_code is not null)
+    or (auth.uid() is not null and status = 'waiting' and share_code is not null)
   );
 
 -- Only authenticated users can create rooms (must be the host)
@@ -42,13 +42,11 @@ create policy "Authenticated users can create rooms"
   on public.rooms for insert
   with check (auth.uid() = host_id);
 
--- Guest can join a waiting room; Host can update their own room (e.g., set status to completed)
-
--- Host can update their own room (any fields)
+-- Host can update their own room (any fields, but cannot set guest_id = host_id)
 create policy "Host can update own room"
   on public.rooms for update
   using (auth.uid() = host_id)
-  with check (auth.uid() = host_id);
+  with check (auth.uid() = host_id and (guest_id is null or guest_id != host_id));
 
 -- Guest can only join a waiting room with no guest assigned
 create policy "Guest can join waiting room"
@@ -59,6 +57,7 @@ create policy "Guest can join waiting room"
   with check (
     auth.uid() = guest_id
     and status = 'active'
+    and guest_id != host_id
   );
 
 -- Grant table access to roles

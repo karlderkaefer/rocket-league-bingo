@@ -133,10 +133,16 @@ export function useRoomChannel(
     subscribeRef.current = subscribe;
   }, [subscribe]);
 
+  // Use a ref for connection state in send() to avoid stale closure issues
+  const connectionStateRef = useRef(connectionState);
+  useEffect(() => {
+    connectionStateRef.current = connectionState;
+  }, [connectionState]);
+
   const send = useCallback((event: string, payload: BroadcastPayload) => {
     const channel = channelRef.current;
 
-    if (channel && connectionState === 'connected') {
+    if (channel && connectionStateRef.current === 'connected') {
       channel.send({
         type: 'broadcast',
         event,
@@ -148,7 +154,7 @@ export function useRoomChannel(
       queueRef.current = [...queueRef.current, msg];
       setPendingQueue((prev) => [...prev, payload]);
     }
-  }, [connectionState]);
+  }, []);
 
   const retry = useCallback(() => {
     retryCountRef.current = 0;

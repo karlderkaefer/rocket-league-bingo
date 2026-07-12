@@ -36,10 +36,7 @@ export type GameAction =
 export function createInitialState(overrides?: Partial<GameState>): GameState {
   return {
     board: null,
-    marks: Array.from({ length: 25 }, () => ({
-      hostMarked: false,
-      guestMarked: false,
-    })),
+    marks: [], // Empty until board is loaded — size is determined by boardSize
     myRole: 'host',
     connected: false,
     bingoLines: [],
@@ -63,7 +60,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'MARK_CELL': {
       const { cellIndex, player } = action;
-      if (cellIndex < 0 || cellIndex >= state.marks.length) return state;
+      if (cellIndex < 0 || cellIndex >= state.marks.length || state.marks.length === 0) return state;
 
       const marks = state.marks.map((cell, i) => {
         if (i !== cellIndex) return cell;
@@ -81,7 +78,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'UNMARK_CELL': {
       const { cellIndex, player } = action;
-      if (cellIndex < 0 || cellIndex >= state.marks.length) return state;
+      if (cellIndex < 0 || cellIndex >= state.marks.length || state.marks.length === 0) return state;
 
       const marks = state.marks.map((cell, i) => {
         if (i !== cellIndex) return cell;
@@ -98,9 +95,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'SET_BOARD': {
+      const cellCount = action.board.cells.length;
+      // Initialize marks array to match board size (only if not already loaded)
+      const marks = state.marks.length === cellCount
+        ? state.marks
+        : Array.from({ length: cellCount }, () => ({ hostMarked: false, guestMarked: false }));
       return {
         ...state,
         board: action.board,
+        marks,
       };
     }
 
