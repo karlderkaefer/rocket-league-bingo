@@ -32,15 +32,15 @@ export interface GameState {
   categoryIds: string[];
 }
 
-/** What gets persisted to localStorage */
+/** What gets persisted to localStorage (legacy — will be replaced by Supabase) */
 export interface PersistedState {
   seed: string;
   categoryIds: string[];
   marks: CellMarks[];
   myRole: PlayerRole;
-  peerId: string;              // For reconnection
-  remotePeerId: string;        // For reconnection
-  timestamp: number;           // For staleness detection
+  peerId: string;
+  remotePeerId: string;
+  timestamp: number;
 }
 
 /** Category definition (bundled static data) */
@@ -55,17 +55,6 @@ export type BingoLine = {
   type: 'row' | 'column' | 'diagonal';
   index: number;               // 0-4 for rows/cols, 0-1 for diagonals
 };
-
-/** Messages sent over the DataChannel between peers */
-export type GameMessage =
-  | { type: 'INIT'; payload: { seed: string; categoryIds: string[] } }
-  | { type: 'MARK'; payload: { cellIndex: number; player: PlayerRole } }
-  | { type: 'UNMARK'; payload: { cellIndex: number; player: PlayerRole } }
-  | { type: 'SYNC_REQUEST' }
-  | { type: 'SYNC_RESPONSE'; payload: { marks: CellMarks[] } }
-  | { type: 'REJECT'; reason: string }
-  | { type: 'PING' }
-  | { type: 'PONG' };
 
 /** Actions dispatched to the game state reducer */
 export type GameAction =

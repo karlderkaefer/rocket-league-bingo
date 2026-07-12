@@ -1,36 +1,56 @@
-import { useTheme } from '../context/ThemeContext';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 
-export default function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+type Theme = 'light' | 'dark';
 
-  return (
-    <button
-      onClick={toggleTheme}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-      style={styles.button}
-      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-    >
-      {theme === 'light' ? '🌙' : '☀️'}
-    </button>
-  );
+function getStoredTheme(): Theme | null {
+  const stored = localStorage.getItem('theme');
+  if (stored === 'light' || stored === 'dark') return stored;
+  return null;
 }
 
-const styles = {
-  button: {
-    position: 'fixed' as const,
-    top: '16px',
-    right: '16px',
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    border: '1px solid var(--border)',
-    background: 'var(--code-bg)',
-    cursor: 'pointer',
-    fontSize: '20px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 100,
-    transition: 'background 0.2s, border-color 0.2s',
-  },
-};
+function getSystemTheme(): Theme {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function applyTheme(theme: Theme) {
+  document.documentElement.classList.toggle('dark', theme === 'dark');
+}
+
+/**
+ * Simple light/dark theme toggle button.
+ * Persists preference in localStorage. Falls back to system preference.
+ */
+export function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>(() => getStoredTheme() ?? getSystemTheme());
+
+  useEffect(() => {
+    applyTheme(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  function toggle() {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  }
+
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={toggle}
+      aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+      className="h-8 w-8 p-0"
+    >
+      {theme === 'dark' ? (
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <circle cx="12" cy="12" r="5" />
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+        </svg>
+      ) : (
+        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      )}
+    </Button>
+  );
+}
